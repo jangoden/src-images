@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Sweet Diary — Aesthetic Coquette Photo Book</title>
+  <meta name="description" content="Buku foto 3D lucu bertema Coquette Pink & Ribbon dengan animasi balik halaman dan lightbox zoom." />
+
+  <!-- Google Fonts: Coquette Serif, Handwritten Script & Rounded Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/book.css" />
+</head>
+<body>
+  <!-- Latar Dekoratif Partikel Lembut (Sparkles, Pita, Hati) -->
+  <div class="ambient-layer" id="ambient-layer" aria-hidden="true"></div>
+  <div class="sparkle-burst-layer" id="sparkle-burst-layer" aria-hidden="true"></div>
+
+  <!-- Header Mini Estetik -->
+  <header class="top-bar">
+    <div class="brand-pill">
+      <svg class="brand-bow" viewBox="0 0 64 40" aria-hidden="true">
+        <path d="M32 20 C24 8, 6 6, 8 19 C10 29, 24 27, 32 20 Z" fill="#f48fb1" />
+        <path d="M32 20 C40 8, 58 6, 56 19 C54 29, 40 27, 32 20 Z" fill="#f48fb1" />
+        <path d="M29 22 L19 37 L26 35 L31 24 Z" fill="#e57399" />
+        <path d="M35 22 L45 37 L38 35 L33 24 Z" fill="#e57399" />
+        <circle cx="32" cy="20" r="5" fill="#ec6f99" />
+      </svg>
+      <span class="brand-title">My Sweet Diary</span>
+    </div>
+    <p class="top-hint" id="top-hint">Klik halaman, tekan panah ← →, atau klik foto untuk zoom</p>
+  </header>
+
+  <!-- Panggung Utama Buku 3D -->
+  <main class="book-viewport" id="book-viewport">
+    <!-- Mode Desktop / Tablet: Buku 3D 2-Halaman -->
+    <div class="book-stage" id="book-stage">
+      <!-- Tombol Panah Samping Cepat (Desktop) -->
+      <button type="button" class="side-nav-btn side-nav-prev" id="side-prev-btn" aria-label="Halaman sebelumnya" title="Halaman sebelumnya (←)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+      </button>
+
+      <div class="book-scene" id="book-scene">
+        <div class="book" id="book" data-state="closed-front" role="region" aria-label="Buku Foto 3D Interaktif">
+          <!-- Lembar-lembar buku (9 leaves = 18 halaman) dirender dinamis oleh js/book.js -->
+        </div>
+      </div>
+
+      <button type="button" class="side-nav-btn side-nav-next" id="side-next-btn" aria-label="Halaman berikutnya" title="Halaman berikutnya (→)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+      </button>
+    </div>
+
+    <!-- Mode Mobile (< 768px): Buku 3D 1-Halaman Penuh -->
+    <div class="mobile-book-stage" id="mobile-book-stage" aria-label="Buku Foto Mobile Interaktif">
+      <div class="mobile-book-card-wrap" id="mobile-book-card-wrap">
+        <!-- Halaman aktif mobile dirender dinamis oleh js/book.js -->
+      </div>
+      <div class="swipe-hint" id="swipe-hint" aria-hidden="true">
+        <span>← Geser untuk membalik halaman →</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- Kontrol Navigasi Bawah Bergaya Pil Coquette -->
+  <nav class="bottom-controls" aria-label="Navigasi Buku Foto">
+    <div class="control-pill">
+      <button type="button" class="ctrl-btn" id="btn-cover" title="Kembali ke Sampul (Home)" aria-label="Kembali ke Sampul">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5V5.5A2.5 2.5 0 0 1 6.5 3H20v14H6.5A2.5 2.5 0 0 0 4 19.5z" /></svg>
+        <span class="ctrl-label">Sampul</span>
+      </button>
+
+      <button type="button" class="ctrl-btn ctrl-primary" id="btn-prev" title="Halaman Sebelumnya (←)" aria-label="Halaman Sebelumnya">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+      </button>
+
+      <div class="page-indicator" id="page-indicator" aria-live="polite">
+        <span class="page-indicator-text" id="page-indicator-text">Sampul Depan</span>
+        <div class="page-progress-track" aria-hidden="true">
+          <div class="page-progress-fill" id="page-progress-fill"></div>
+        </div>
+      </div>
+
+      <button type="button" class="ctrl-btn ctrl-primary" id="btn-next" title="Halaman Berikutnya (→)" aria-label="Halaman Berikutnya">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+      </button>
+
+      <button type="button" class="ctrl-btn" id="btn-gallery" title="Daftar Halaman & Foto" aria-label="Daftar Halaman & Foto">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg>
+        <span class="ctrl-label">Galeri</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Modal Galeri Cepat (Lompat ke Foto Mana Pun) -->
+  <div class="gallery-modal" id="gallery-modal" role="dialog" aria-modal="true" aria-labelledby="gallery-modal-title" hidden>
+    <div class="gallery-backdrop" id="gallery-backdrop"></div>
+    <div class="gallery-sheet">
+      <div class="gallery-header">
+        <div>
+          <span class="gallery-eyebrow">Quick Index</span>
+          <h2 class="gallery-title" id="gallery-modal-title">Pilih Halaman Kenangan</h2>
+        </div>
+        <button type="button" class="icon-close-btn" id="gallery-close-btn" aria-label="Tutup galeri">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+        </button>
+      </div>
+      <div class="gallery-grid" id="gallery-grid">
+        <!-- Thumbnail 14 foto dirender dinamis oleh js/book.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox Zoom Foto Resolusi Penuh -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-labelledby="lightbox-title" hidden>
+    <div class="lightbox-backdrop" id="lightbox-backdrop"></div>
+
+    <div class="lightbox-content">
+      <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Tutup tampilan foto (Esc)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+      </button>
+
+      <button type="button" class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Foto sebelumnya">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+      </button>
+
+      <figure class="lightbox-figure">
+        <div class="lightbox-frame">
+          <span class="lightbox-tape lightbox-tape-left" aria-hidden="true"></span>
+          <span class="lightbox-tape lightbox-tape-right" aria-hidden="true"></span>
+          <img id="lightbox-img" src="" alt="" />
+        </div>
+        <figcaption class="lightbox-caption">
+          <div class="lightbox-meta">
+            <span class="lightbox-badge" id="lightbox-badge">Memory #01</span>
+            <span class="lightbox-counter" id="lightbox-counter">1 / 14</span>
+          </div>
+          <h3 class="lightbox-title" id="lightbox-title"></h3>
+          <p class="lightbox-desc" id="lightbox-desc"></p>
+        </figcaption>
+      </figure>
+
+      <button type="button" class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Foto berikutnya">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+      </button>
+    </div>
+  </div>
+
+  <script src="js/photos.js"></script>
+  <script src="js/decorations.js"></script>
+  <script src="js/lightbox.js"></script>
+  <script src="js/book.js"></script>
+</body>
+</html>
